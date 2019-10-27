@@ -2,7 +2,7 @@
 
 get-cli() {
     IS_VERBOSE=false
-    VERBOSE=""
+    DEBUG=false
 
     usage() {
         printf -v text "%s" \
@@ -27,7 +27,7 @@ get-cli() {
                 IS_VERBOSE=true
                 shift ;;
             -d | --debug )
-                VERBOSE_FLAG="v"
+                DEBUG=true
                 shift ;;
             -u | --update )
                 UPDATE_USR_BIN=true
@@ -68,14 +68,18 @@ get-cli() {
     export RELEASETAG
     export VERBOSE_FLAG
 
-    ASSETID=$(curl -L${VERBOSE_FLAG}J -H 'Accept: application/json' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/$RELEASE?access_token=$TOKEN" | grep -Pzo "\"assets\":[\s\S]*?\"id\": \K\d*")
-    export ASSETID
+    if [ -z "$DEBUG" ]; then
+        ASSETID=$(curl -LJ -H 'Accept: application/json' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/$RELEASE?access_token=$TOKEN" | grep -Pzo "\"assets\":[\s\S]*?\"id\": \K\d*")
+        curl -LJO -H 'Accept: application/octet-stream' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/assets/$ASSETID?access_token=$TOKEN"
+
+    else
+        ASSETID=$(curl -LvJ -H 'Accept: application/json' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/$RELEASE?access_token=$TOKEN" | grep -Pzo "\"assets\":[\s\S]*?\"id\": \K\d*")
+        curl -LvJO -H 'Accept: application/octet-stream' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/assets/$ASSETID?access_token=$TOKEN"
+
+    fi
+    unset TOKEN
 
     $IS_VERBOSE && printf "\nASSETID: $ASSETID for RELEASE: $RELEASE\n\n"
-
-    curl -L${VERBOSE_FLAG}JO -H 'Accept: application/octet-stream' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/assets/$ASSETID?access_token=$TOKEN"
-
-    unset TOKEN
 
     if [ ! -z "$UPDATE_USR_BIN" ]; then
         $IS_VERBOSE && printf "replacing /usr/bin/qwiki\n"
