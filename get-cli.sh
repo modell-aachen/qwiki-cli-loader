@@ -8,6 +8,7 @@ get-cli() {
         printf -v text "%s" \
             "get-cli downloads qwiki-cli to the current directory [OPTION...]\n" \
             "    -v, --verbose        shows more info\n" \
+            "    -d, --debug          debug API calls by passing verbose flag to curl\n" \
             "    -u, --update         update cli binary in /usr/bin/\n" \
             "    -h, --help           shows this help message\n" \
             "    -r, --release-tag    cli release tag, e.g. 0.1.12, default: latest\n" \
@@ -15,7 +16,7 @@ get-cli() {
         printf "$text"
     }
 
-    OPTS=`getopt -o vuhr:t: --long verbose,help,update,release-tag:,token: -- "$@"`
+    OPTS=`getopt -o vduhr:t: --long verbose,debug,help,update,release-tag:,token: -- "$@"`
     if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
     eval set -- "$OPTS"
@@ -24,6 +25,8 @@ get-cli() {
         case "$1" in
             -v | --verbose )
                 IS_VERBOSE=true
+                shift ;;
+            -d | --debug )
                 VERBOSE_FLAG="v"
                 shift ;;
             -u | --update )
@@ -48,7 +51,7 @@ get-cli() {
     done
 
     if [ -z "$TOKEN" ]; then
-        printf "GitHub token is required\n"
+        printf "GitHub token is required, please insert\n"
         read TOKEN
         if [ -z "$TOKEN" ]; then
             exit 1
@@ -79,6 +82,8 @@ get-cli() {
     else
         $IS_VERBOSE && printf "Update flag not set, not replacing /usr/bin/qwiki\n"
     fi
+
+    printf "\ndone\n"
 
 }
 
