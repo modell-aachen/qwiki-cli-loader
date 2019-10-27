@@ -61,7 +61,7 @@ get-cli() {
     if [ -z "$RELEASE" ]; then
         RELEASE="latest"
     else
-        RELEASE="tags/{$RELEASE}"
+        RELEASE="tags/${RELEASE}"
     fi
 
     export TOKEN
@@ -70,7 +70,9 @@ get-cli() {
 
     ASSETID=$(curl -L${VERBOSE_FLAG}J -H 'Accept: application/json' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/$RELEASE?access_token=$TOKEN" | grep -Pzo "\"assets\":[\s\S]*?\"id\": \K\d*")
     export ASSETID
-    $IS_VERBOSE && printf "ASSETID: $ASSETID for RELEASE: $RELEASE\n"
+
+    $IS_VERBOSE && printf "\nASSETID: $ASSETID for RELEASE: $RELEASE\n\n"
+
     curl -L${VERBOSE_FLAG}JO -H 'Accept: application/octet-stream' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/assets/$ASSETID?access_token=$TOKEN"
 
     unset TOKEN
