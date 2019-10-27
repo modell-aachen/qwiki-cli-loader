@@ -67,15 +67,17 @@ get-cli() {
 
     ASSETID=$(curl -L${VERBOSE_FLAG}J -H 'Accept: application/json' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/$RELEASE?access_token=$TOKEN" | grep -Pzo "\"assets\":[\s\S]*?\"id\": \K\d*")
     export ASSETID
-    IS_VERBOSE && printf "ASSETID: $ASSETID for RELEASE: $RELEASE\n"
+    $IS_VERBOSE && printf "ASSETID: $ASSETID for RELEASE: $RELEASE\n"
     curl -L${VERBOSE_FLAG}JO -H 'Accept: application/octet-stream' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/assets/$ASSETID?access_token=$TOKEN"
 
+    unset TOKEN
+
     if [ ! -z "$UPDATE_USR_BIN" ]; then
-        IS_VERBOSE && printf "replacing /usr/bin/qwiki\n"
+        $IS_VERBOSE && printf "replacing /usr/bin/qwiki\n"
         mv ./qwiki /usr/bin/qwiki
         chmod +x /usr/bin/qwiki
     else
-        IS_VERBOSE && printf "Update flag not set, not replacing /usr/bin/qwiki\n"
+        $IS_VERBOSE && printf "Update flag not set, not replacing /usr/bin/qwiki\n"
     fi
 
 }
