@@ -49,7 +49,10 @@ get-cli() {
 
     if [ -z "$TOKEN" ]; then
         printf "GitHub token is required\n"
-        exit 1
+        read TOKEN
+        if [ -z "$TOKEN" ]; then
+            exit 1
+        fi
     fi
 
     if [ -z "$RELEASE" ]; then
