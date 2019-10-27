@@ -2,11 +2,7 @@
 
 get-cli() {
     IS_VERBOSE=false
-<<<<<<< HEAD
     VERBOSE_FLAG=""
-=======
-    DEBUG=false
->>>>>>> 1f5a9d5091e34e30b60c285da91c869a5b84025b
 
     usage() {
         printf -v text "%s" \
