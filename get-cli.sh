@@ -6,17 +6,16 @@ get-cli() {
 
     usage() {
         printf -v text "%s" \
-            "get-cli downloads qwiki-cli to the current directory [OPTION...]\n" \
+            "get-cli downloads qwiki-cli to the current directory; ask for GitHub token if GITHUB_TOKEN is not set as environmental variable [OPTION...]\n" \
             "    -v, --verbose        shows more info\n" \
             "    -d, --debug          debug API calls by passing verbose flag to curl\n" \
             "    -u, --update         update cli binary in /usr/bin/\n" \
             "    -h, --help           shows this help message\n" \
-            "    -r, --release-tag    cli release tag, e.g. 0.1.12, default: latest\n" \
-            "    -t, --token          GitHub Token\n"
+            "    -r, --release-tag    cli release tag, e.g. 0.1.12, default: latest\n"
         printf "$text"
     }
 
-    OPTS=`getopt -o vduhr:t: --long verbose,debug,help,update,release-tag:,token: -- "$@"`
+    OPTS=`getopt -o vduhr: --long verbose,debug,help,update,release-tag: -- "$@"`
     if [ $? != 0 ] ; then echo "Failed parsing options." >&2 ; exit 1 ; fi
 
     eval set -- "$OPTS"
@@ -32,9 +31,6 @@ get-cli() {
             -u | --update )
                 UPDATE_USR_BIN=true
                 shift ;;
-            -t | --token )
-                TOKEN=$2
-                shift 2 ;;
             -r | --release-tag )
                 RELEASE=$2
                 shift 2 ;;
@@ -50,12 +46,14 @@ get-cli() {
         esac
     done
 
-    if [ -z "$TOKEN" ]; then
+    if [ -z "$GITHUB_TOKEN" ]; then
         printf "GitHub token is required, please insert\n"
         read TOKEN
         if [ -z "$TOKEN" ]; then
             exit 1
         fi
+    else
+        TOKEN="$GITHUB_TOKEN"
     fi
 
     if [ -z "$RELEASE" ]; then
