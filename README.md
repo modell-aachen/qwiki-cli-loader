@@ -1,6 +1,9 @@
 # qwiki-cli-loader
 Shell script for downloading qwiki-cli using github api
 
+## releases
+remember to __move the "latest" tag__ after changes to the script and update/re-release a latest release so that https://github.com/modell-aachen/qwiki-cli-loader/archive/latest.zip points to the current version
+
 ## help ./get-cli.sh --help
 ```Bash
 get-cli downloads qwiki-cli to the current directory; ask for GitHub token if GITHUB_TOKEN is not set as environmental variable [OPTION...]
