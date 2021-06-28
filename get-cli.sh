@@ -62,8 +62,8 @@ get-cli() {
         RELEASE="tags/${RELEASE}"
     fi
 
-    ASSETID=$(curl -L${VERBOSE_FLAG}J -H 'Accept: application/json' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/$RELEASE?access_token=$TOKEN" | grep -Pzo "\"assets\":[\s\S]*?\"id\": \K\d*" | tr -d '\0')
-    curl -L${VERBOSE_FLAG}JO -H 'Accept: application/octet-stream' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/assets/$ASSETID?access_token=$TOKEN"
+    ASSETID=$(curl -L${VERBOSE_FLAG}J -H "Authorization: token $TOKEN" -H 'Accept: application/json' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/$RELEASE" | grep -Pzo "\"assets\":[\s\S]*?\"id\": \K\d*" | tr -d '\0')
+    curl -L${VERBOSE_FLAG}JO -H "Authorization: token $TOKEN" -H 'Accept: application/octet-stream' "https://api.github.com/repos/modell-aachen/qwiki-cli/releases/assets/$ASSETID"
     unset TOKEN
 
     $IS_VERBOSE && printf "\nASSETID: $ASSETID for RELEASE: $RELEASE\n\n"
